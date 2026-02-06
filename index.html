@@ -3,29 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Super Bowl</title>
+    <title>Super Bowl Scoreboard</title>
     <style>
-        /* Existing styles here */
-        .banner {
-            height: 300px; /* Updated height */
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 0; 
         }
-        .side-label {
-            display: inline-block; /* Changed to horizontal layout */
-            /* Add any additional styles necessary to match top label style */
+        .banner { 
+            height: 300px; 
+            background-color: #4CAF50; 
+            color: white; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 2em; 
+        }
+        .scoreboard { 
+            display: grid; 
+            grid-template-columns: repeat(10, 1fr); 
+            gap: 5px; 
+            padding: 20px; 
+        }
+        .square { 
+            width: 100%; 
+            height: 100px; 
+            background-color: #f0f0f0; 
+            border: 1px solid #ccc; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 1.5em; 
+        }
+        .top-label, .side-label { 
+            font-weight: bold; 
+            text-align: center; 
+            font-size: 1.8em; 
+        }
+        .controls { 
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
     <div class="banner">
-        <!-- Banner image here -->
+        NFC - SEAHAWKS 🦅
     </div>
-    <div class="grid">
-        <div class="sidebar">
-            <div class="side-label">Updated Label Text</div> <!-- Updated text and style -->
+    <div style="display: flex;">
+        <div class="side-label" style="writing-mode: vertical-rl; transform: rotate(180deg);">
+            AFC - PATRIOTS
         </div>
-        <div class="main-content">
-            <!-- Main content here -->
+        <div class="scoreboard">
+            <!-- Scoreboard Squares -->
+            <div class="square">0</div>
+            <div class="square">0</div>
+            <div class="square">0</div>
+            <div class="square">0</div>
+            <div class="square">0</div>
+            <div class="square">0</div>
+            <div class="square">0</div>
+            <div class="square">0</div>
+            <div class="square">0</div>
+            <div class="square">0</div>
+            <div class="square">0</div>
+            <div class="square">0</div>
+            <div class="square">0</div>
+            <div class="square">0</div>
+            <div class="square">0</div>
+            <div class="square">0</div>
+            <div class="square">0</div>
+            <div class="square">0</div>
+            <div class="square">0</div>
+            <div class="square">0</div>
+            <div class="square">0</div>
+            <div class="square">0</div>
+            <div class="square">0</div>
+            <div class="square">0</div>
+            <div class="square">0</div>
+            <div class="square">0</div>
+            <div class="square">0</div>
         </div>
     </div>
+    <div class="controls">
+        <button onclick="updateScore('seahawks')">Update Seahawks Score</button>
+        <button onclick="updateScore('patriots')">Update Patriots Score</button>
+    </div>
+    <script>
+        let seahawksScore = 0;
+        let patriotsScore = 0;
+
+        function updateScore(team) {
+            if (team === 'seahawks') seahawksScore++;
+            if (team === 'patriots') patriotsScore++;
+            renderScores();
+        }
+
+        function renderScores() {
+            const squares = document.querySelectorAll('.square');
+            squares.forEach((square, index) => {
+                square.textContent = (index < seahawksScore) ? 'S' : (index < seahawksScore + patriotsScore) ? 'P' : '0';
+            });
+        }
+    </script>
 </body>
 </html>
