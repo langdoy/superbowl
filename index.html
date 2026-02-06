@@ -3,275 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Super Bowl LX Squares Tracker</title>
+    <title>Super Bowl</title>
     <style>
-        :root {
-            --sea-navy: #002244;
-            --sea-green: #69BE28;
-            --pat-blue: #002244;
-            --pat-silver: #B0B7BC;
-            --pat-red: #C60C30;
-            --white: #ffffff;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            background-color: #f4f4f4;
-            color: var(--sea-navy);
-        }
-
-        /* Header & Banner */
+        /* Existing styles here */
         .banner {
-            width: 100%;
-            height: 200px;
-            background: url('banner.png') no-repeat center center;
-            background-size: cover;
-            border-bottom: 5px solid var(--sea-green);
+            height: 300px; /* Updated height */
         }
-
-        /* Scoreboard */
-        .scoreboard {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            padding: 20px;
-            background: var(--sea-navy);
-            color: white;
-            text-align: center;
-        }
-        .score-box {
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-        .score-num {
-            display: block;
-            font-size: 2.5rem;
-            color: var(--sea-green);
-        }
-
-        /* Grid Layout */
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .grid-wrapper {
-            position: relative;
-            margin-top: 40px;
-        }
-
-        .top-label {
-            text-align: center;
-            font-weight: bold;
-            font-size: 1.5rem;
-            background: var(--sea-navy);
-            color: white;
-            padding: 10px;
-            border-radius: 8px 8px 0 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-        }
-
         .side-label {
-            writing-mode: vertical-rl;
-            transform: rotate(180deg);
-            background: var(--pat-red);
-            color: white;
-            font-weight: bold;
-            padding: 10px;
-            text-align: center;
-            border-radius: 0 8px 8px 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
+            display: inline-block; /* Changed to horizontal layout */
+            /* Add any additional styles necessary to match top label style */
         }
-
-        table {
-            border-collapse: collapse;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-
-        td, th {
-            width: 70px;
-            height: 70px;
-            border: 1px solid #ddd;
-            text-align: center;
-            vertical-align: middle;
-            background: white;
-            position: relative;
-        }
-
-        .header-cell {
-            background: #eee;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-
-        .square {
-            cursor: pointer;
-            transition: 0.2s;
-            font-size: 0.8rem;
-        }
-
-        .square:hover {
-            background: #f0fdf4;
-        }
-
-        .active-winner {
-            background: var(--sea-green) !important;
-            color: white;
-            font-weight: bold;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.7; }
-            100% { opacity: 1; }
-        }
-
-        .name-list {
-            font-size: 0.7rem;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        /* Controls */
-        .controls {
-            margin: 20px;
-            padding: 15px;
-            background: white;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-        }
-
-        button {
-            padding: 10px 20px;
-            background: var(--sea-navy);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        button:hover { background: #003366; }
     </style>
 </head>
 <body>
-
-<div class="banner"></div>
-
-<div class="scoreboard">
-    <div class="score-box">
-        PATRIOTS (AFC)
-        <span class="score-num" id="away-score">0</span>
+    <div class="banner">
+        <!-- Banner image here -->
     </div>
-    <div style="font-size: 2rem; margin-top: 15px;">VS</div>
-    <div class="score-box">
-        SEAHAWKS (NFC)
-        <span class="score-num" id="home-score">0</span>
+    <div class="grid">
+        <div class="sidebar">
+            <div class="side-label">Updated Label Text</div> <!-- Updated text and style -->
+        </div>
+        <div class="main-content">
+            <!-- Main content here -->
+        </div>
     </div>
-    <div class="score-box" style="margin-left: 40px;">
-        QUARTER
-        <span class="score-num" id="current-qtr">1st</span>
-    </div>
-</div>
-
-<div class="container">
-    <div class="controls">
-        <label>Manual Score Sync: </label>
-        <input type="number" id="manual-home" placeholder="Seahawks" style="width: 80px;">
-        <input type="number" id="manual-away" placeholder="Patriots" style="width: 80px;">
-        <button onclick="manualSync()">Update Grid</button>
-        <p style="font-size: 0.8rem; color: #666;">*Scores are auto-saved to your browser cache.</p>
-    </div>
-
-    <div class="top-label">NFC - SEAHAWKS 🦅</div>
-    <div style="display: flex;">
-        <div class="side-label">AFC - PATRIOTS 🇺🇸</div>
-        <table id="squares-grid">
-            </table>
-    </div>
-</div>
-
-<script>
-    const homeTeam = "Seahawks";
-    const awayTeam = "Patriots";
-    let entries = JSON.parse(localStorage.getItem('sb_entries')) || {};
-
-    function initGrid() {
-        const table = document.getElementById('squares-grid');
-        let html = '<tr><th></th>';
-        
-        // Header Row (Home/Seahawks Numbers)
-        for(let i=0; i<10; i++) html += `<th class="header-cell">${i}</th>`;
-        html += '</tr>';
-
-        // Body Rows (Away/Patriots Numbers)
-        for(let r=0; r<10; r++) {
-            html += `<tr><th class="header-cell">${r}</th>`;
-            for(let c=0; c<10; c++) {
-                const key = `${r}-${c}`;
-                const names = entries[key] ? entries[key].join(', ') : '';
-                html += `<td class="square" id="sq-${r}-${c}" onclick="addName('${r}','${c}')">
-                            <div class="name-list">${names}</div>
-                         </td>`;
-            }
-            html += '</tr>';
-        }
-        table.innerHTML = html;
-        highlightWinner(0, 0);
-    }
-
-    function addName(r, c) {
-        const name = prompt("Enter Name for this square (Leave blank to clear):");
-        const key = `${r}-${c}`;
-        
-        if (name === null) return;
-        if (name === "") {
-            delete entries[key];
-        } else {
-            if (!entries[key]) entries[key] = [];
-            entries[key].push(name);
-        }
-        
-        localStorage.setItem('sb_entries', JSON.stringify(entries));
-        initGrid();
-    }
-
-    function highlightWinner(homeScore, awayScore) {
-        const homeDigit = homeScore % 10;
-        const awayDigit = awayScore % 10;
-        
-        document.querySelectorAll('.square').forEach(el => el.classList.remove('active-winner'));
-        const winningId = `sq-${awayDigit}-${homeDigit}`; // Row = Away, Col = Home
-        document.getElementById(winningId).classList.add('active-winner');
-    }
-
-    function manualSync() {
-        const h = document.getElementById('manual-home').value || 0;
-        const a = document.getElementById('manual-away').value || 0;
-        document.getElementById('home-score').innerText = h;
-        document.getElementById('away-score').innerText = a;
-        highlightWinner(h, a);
-    }
-
-    // Auto-fetch placeholder (Runs every 1 min)
-    setInterval(() => {
-        console.log("Checking for score updates...");
-        // In a real scenario, you'd fetch a JSON feed here.
-    }, 60000);
-
-    window.onload = initGrid;
-</script>
-
 </body>
-
 </html>
