@@ -15,7 +15,7 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, sans-serif;
+            font-family: 'Inter', sans-serif;
             background-color: var(--bg-dark);
             color: var(--text-main);
             margin: 0;
@@ -24,30 +24,27 @@
             align-items: center;
         }
 
-        /* Banner */
+        /* Banner - Updated to 300px */
         .banner {
             width: 100%;
-            height: 180px;
-            background: linear-gradient(rgba(5, 22, 46, 0.2), rgba(5, 22, 46, 0.2)), url('banner.png') no-repeat center center;
+            height: 300px;
+            background: url('banner.jpg') no-repeat center center;
             background-size: cover;
         }
 
-        /* Header Status */
         .status-bar {
             width: 90%;
             max-width: 1000px;
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             padding: 15px 0;
-            font-size: 0.9rem;
-            color: #8899ac;
         }
 
         .refresh-btn {
             background: rgba(255,255,255,0.05);
             border: 1px solid var(--border);
             color: white;
-            padding: 5px 15px;
+            padding: 8px 20px;
             border-radius: 5px;
             cursor: pointer;
         }
@@ -64,17 +61,6 @@
             border: 1px solid var(--border);
         }
 
-        .scoreboard-title {
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: bold;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
         .scores-display {
             display: flex;
             justify-content: space-around;
@@ -86,7 +72,6 @@
         .seahawks-color { color: var(--accent-green); }
         .patriots-color { color: var(--accent-red); }
 
-        /* Quarter Trackers */
         .qtr-row {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -102,47 +87,42 @@
 
         /* Grid Section */
         .grid-container {
-            margin-top: 50px;
+            margin-top: 40px;
+            width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 100%;
         }
 
-        .log-qtr-btns { margin: 20px 0; }
-        .btn-qtr {
-            background: transparent;
-            border: 1px solid var(--border);
-            color: white;
-            margin: 0 5px;
-            padding: 5px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .grid-wrapper { display: flex; align-items: flex-start; }
+        .grid-wrapper { display: flex; align-items: center; }
 
         .patriots-side-label {
             writing-mode: vertical-rl;
             transform: rotate(180deg);
-            padding: 20px;
+            padding-right: 20px;
             color: var(--accent-red);
             font-weight: bold;
-            text-align: center;
+            font-size: 1.1rem;
+            text-transform: uppercase;
         }
 
-        table { border-spacing: 6px; }
+        table { border-spacing: 4px; }
 
+        /* Squares 20% Smaller & Centered Content */
         td {
-            width: 65px;
-            height: 65px;
+            width: 52px;
+            height: 52px;
             background: rgba(255,255,255,0.05);
             border: 1px solid var(--border);
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
+            font-size: 0.65rem;
+            text-align: center;
+            /* Flex centering for the + symbol */
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: 0.3s;
-            position: relative;
-            font-size: 0.7rem;
         }
 
         td:hover { background: rgba(255,255,255,0.1); border-color: var(--accent-green); }
@@ -153,10 +133,11 @@
             box-shadow: 0 0 15px var(--accent-green);
         }
 
-        .num-header { color: var(--accent-green); font-weight: bold; padding: 10px; }
-        .side-header { color: var(--accent-red); font-weight: bold; padding: 10px; }
+        .num-header { color: var(--accent-green); font-weight: bold; width: 52px; display: table-cell; }
+        .side-header { color: var(--accent-red); font-weight: bold; }
 
-        .add-icon { font-size: 1.2rem; opacity: 0.3; }
+        .log-controls { margin-top: 20px; }
+        .btn-log { background: transparent; border: 1px solid var(--border); color: #8899ac; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -164,8 +145,7 @@
 <div class="banner"></div>
 
 <div class="status-bar">
-    <div>🕒 Loading scores...</div>
-    <button class="refresh-btn" onclick="location.reload()">🔄 Refresh</button>
+    <button class="refresh-btn" onclick="fetchLiveScores()">🔄 Update Scores</button>
 </div>
 
 <div class="card">
@@ -188,40 +168,49 @@
         <div class="qtr-box"><div>Q3</div><div id="q3-score">--</div></div>
         <div class="qtr-box"><div>Q4</div><div id="q4-score">--</div></div>
     </div>
+
+    <div class="log-controls">
+        <span style="font-size: 0.8rem; color: #8899ac;">Log Quarter End:</span>
+        <button class="btn-log" onclick="logQuarter(1)">Q1</button>
+        <button class="btn-log" onclick="logQuarter(2)">Q2</button>
+        <button class="btn-log" onclick="logQuarter(3)">Q3</button>
+        <button class="btn-log" onclick="logQuarter(4)">Q4</button>
+    </div>
 </div>
 
 <div class="grid-container">
-    <div class="log-qtr-btns">
-        Log Quarter End: 
-        <button class="btn-qtr" onclick="logScore(1)">Q1</button>
-        <button class="btn-qtr" onclick="logScore(2)">Q2</button>
-        <button class="btn-qtr" onclick="logScore(3)">Q3</button>
-        <button class="btn-qtr" onclick="logScore(4)">Q4</button>
-    </div>
-
-    <p style="font-size: 0.85rem; color: #8899ac;">Click any square to add your name. The highlighted square shows the current winning position.</p>
-
-    <div style="color: var(--accent-green); font-weight: bold; margin-bottom: 10px;">🦅 NFC - SEAHAWKS</div>
-    
+    <div style="color: var(--accent-green); font-weight: bold; margin-bottom: 10px;">NFC - SEAHAWKS</div>
     <div class="grid-wrapper">
-        <div class="patriots-side-label">AFC - PATRIOTS 🇺🇸</div>
+        <div class="patriots-side-label">AFC - PATRIOTS</div>
         <table id="mainGrid"></table>
     </div>
 </div>
 
 <script>
-    let entries = JSON.parse(localStorage.getItem('sb_entries_v2')) || {};
-    let scores = JSON.parse(localStorage.getItem('sb_scores_v2')) || {h: 0, a: 0, q1: '--', q2: '--', q3: '--', q4: '--'};
+    let entries = JSON.parse(localStorage.getItem('sb_entries_v3')) || {};
+    let scores = JSON.parse(localStorage.getItem('sb_scores_v3')) || {h: 0, a: 0, q1:'--', q2:'--', q3:'--', q4:'--'};
 
-    function init() {
-        // Load Scores
+    async function fetchLiveScores() {
+        try {
+            const res = await fetch('https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard');
+            const data = await res.json();
+            const game = data.events.find(e => e.shortName.includes('SEA') && e.shortName.includes('NE'));
+            if (game) {
+                scores.h = parseInt(game.competitions[0].competitors.find(t => t.team.abbreviation === 'SEA').score);
+                scores.a = parseInt(game.competitions[0].competitors.find(t => t.team.abbreviation === 'NE').score);
+                localStorage.setItem('sb_scores_v3', JSON.stringify(scores));
+                updateUI();
+            }
+        } catch (e) { console.warn("Score sync unavailable."); }
+    }
+
+    function updateUI() {
         document.getElementById('score-home').innerText = scores.h;
         document.getElementById('score-away').innerText = scores.a;
         document.getElementById('q1-score').innerText = scores.q1;
         document.getElementById('q2-score').innerText = scores.q2;
         document.getElementById('q3-score').innerText = scores.q3;
         document.getElementById('q4-score').innerText = scores.q4;
-
         renderGrid();
     }
 
@@ -235,36 +224,31 @@
             html += `<tr><td class="side-header">${r}</td>`;
             for(let c=0; c<10; c++) {
                 const key = `${r}-${c}`;
-                const name = entries[key] || '<span class="add-icon">+</span>';
+                const name = entries[key] || '+';
                 const isWinner = (scores.h % 10 === c && scores.a % 10 === r);
-                html += `<td class="${isWinner ? 'active-winner' : ''}" onclick="updateName('${r}','${c}')">${name}</td>`;
+                html += `<td class="${isWinner ? 'active-winner' : ''}" onclick="addName('${r}','${c}')">${name}</td>`;
             }
             html += '</tr>';
         }
         table.innerHTML = html;
     }
 
-    function updateName(r, c) {
-        const name = prompt("Enter Name:");
-        if (name === null) return;
-        entries[`${r}-${c}`] = name;
-        localStorage.setItem('sb_entries_v2', JSON.stringify(entries));
-        renderGrid();
-    }
-
-    function logScore(q) {
-        const h = prompt("Current Seahawks Score:");
-        const a = prompt("Current Patriots Score:");
-        if (h !== null && a !== null) {
-            scores.h = h;
-            scores.a = a;
-            scores[`q${q}`] = `${h}-${a}`;
-            localStorage.setItem('sb_scores_v2', JSON.stringify(scores));
-            init();
+    function addName(r, c) {
+        const name = prompt("Enter name for this square:");
+        if (name !== null) {
+            entries[`${r}-${c}`] = name;
+            localStorage.setItem('sb_entries_v3', JSON.stringify(entries));
+            renderGrid();
         }
     }
 
-    window.onload = init;
+    function logQuarter(q) {
+        scores[`q${q}`] = `${scores.h}-${scores.a}`;
+        localStorage.setItem('sb_scores_v3', JSON.stringify(scores));
+        updateUI();
+    }
+
+    window.onload = () => { updateUI(); fetchLiveScores(); };
 </script>
 </body>
 </html>
