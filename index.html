@@ -3,107 +3,268 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Super Bowl Scoreboard</title>
+    <title>Super Bowl LX Tracker</title>
     <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            margin: 0; 
-            padding: 0; 
+        :root {
+            --bg-dark: #05162e;
+            --card-bg: #0d213f;
+            --accent-green: #69BE28;
+            --accent-red: #C60C30;
+            --text-main: #e0e6ed;
+            --border: #1a3a5f;
         }
-        .banner { 
-            height: 300px; 
-            background-color: #4CAF50; 
-            color: white; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 2em; 
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        .scoreboard { 
-            display: grid; 
-            grid-template-columns: repeat(10, 1fr); 
-            gap: 5px; 
-            padding: 20px; 
+
+        /* Banner */
+        .banner {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(rgba(5, 22, 46, 0.2), rgba(5, 22, 46, 0.2)), url('banner.jpg') no-repeat center center;
+            background-size: cover;
         }
-        .square { 
-            width: 100%; 
-            height: 100px; 
-            background-color: #f0f0f0; 
-            border: 1px solid #ccc; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 1.5em; 
+
+        /* Header Status */
+        .status-bar {
+            width: 90%;
+            max-width: 1000px;
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            font-size: 0.9rem;
+            color: #8899ac;
         }
-        .top-label, .side-label { 
-            font-weight: bold; 
-            text-align: center; 
-            font-size: 1.8em; 
+
+        .refresh-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
         }
-        .controls { 
-            margin-top: 20px;
+
+        /* Scoreboard Card */
+        .card {
+            background: var(--card-bg);
+            width: 90%;
+            max-width: 800px;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            text-align: center;
+            border: 1px solid var(--border);
         }
+
+        .scoreboard-title {
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .scores-display {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .team-score { font-size: 4rem; font-weight: 800; margin: 10px 0; }
+        .seahawks-color { color: var(--accent-green); }
+        .patriots-color { color: var(--accent-red); }
+
+        /* Quarter Trackers */
+        .qtr-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .qtr-box {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        /* Grid Section */
+        .grid-container {
+            margin-top: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .log-qtr-btns { margin: 20px 0; }
+        .btn-qtr {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: white;
+            margin: 0 5px;
+            padding: 5px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .grid-wrapper { display: flex; align-items: flex-start; }
+
+        .patriots-side-label {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            padding: 20px;
+            color: var(--accent-red);
+            font-weight: bold;
+            text-align: center;
+        }
+
+        table { border-spacing: 6px; }
+
+        td {
+            width: 65px;
+            height: 65px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+            font-size: 0.7rem;
+        }
+
+        td:hover { background: rgba(255,255,255,0.1); border-color: var(--accent-green); }
+
+        .active-winner {
+            background: #2a4d1a !important;
+            border: 2px solid var(--accent-green) !important;
+            box-shadow: 0 0 15px var(--accent-green);
+        }
+
+        .num-header { color: var(--accent-green); font-weight: bold; padding: 10px; }
+        .side-header { color: var(--accent-red); font-weight: bold; padding: 10px; }
+
+        .add-icon { font-size: 1.2rem; opacity: 0.3; }
     </style>
 </head>
 <body>
-    <div class="banner">
-        NFC - SEAHAWKS 🦅
-    </div>
-    <div style="display: flex;">
-        <div class="side-label" style="writing-mode: vertical-rl; transform: rotate(180deg);">
-            AFC - PATRIOTS
+
+<div class="banner"></div>
+
+<div class="status-bar">
+    <div>🕒 Loading scores...</div>
+    <button class="refresh-btn" onclick="location.reload()">🔄 Refresh</button>
+</div>
+
+<div class="card">
+    <div class="scoreboard-title">🏆 SCOREBOARD 🏆</div>
+    <div class="scores-display">
+        <div>
+            <div style="font-size: 0.8rem; color: var(--accent-green);">SEAHAWKS</div>
+            <div class="team-score seahawks-color" id="score-home">0</div>
         </div>
-        <div class="scoreboard">
-            <!-- Scoreboard Squares -->
-            <div class="square">0</div>
-            <div class="square">0</div>
-            <div class="square">0</div>
-            <div class="square">0</div>
-            <div class="square">0</div>
-            <div class="square">0</div>
-            <div class="square">0</div>
-            <div class="square">0</div>
-            <div class="square">0</div>
-            <div class="square">0</div>
-            <div class="square">0</div>
-            <div class="square">0</div>
-            <div class="square">0</div>
-            <div class="square">0</div>
-            <div class="square">0</div>
-            <div class="square">0</div>
-            <div class="square">0</div>
-            <div class="square">0</div>
-            <div class="square">0</div>
-            <div class="square">0</div>
-            <div class="square">0</div>
-            <div class="square">0</div>
-            <div class="square">0</div>
-            <div class="square">0</div>
-            <div class="square">0</div>
-            <div class="square">0</div>
-            <div class="square">0</div>
+        <div style="font-size: 2rem; opacity: 0.5;">-</div>
+        <div>
+            <div style="font-size: 0.8rem; color: var(--accent-red);">PATRIOTS</div>
+            <div class="team-score patriots-color" id="score-away">0</div>
         </div>
     </div>
-    <div class="controls">
-        <button onclick="updateScore('seahawks')">Update Seahawks Score</button>
-        <button onclick="updateScore('patriots')">Update Patriots Score</button>
+
+    <div class="qtr-row">
+        <div class="qtr-box"><div>Q1</div><div id="q1-score">--</div></div>
+        <div class="qtr-box"><div>Q2</div><div id="q2-score">--</div></div>
+        <div class="qtr-box"><div>Q3</div><div id="q3-score">--</div></div>
+        <div class="qtr-box"><div>Q4</div><div id="q4-score">--</div></div>
     </div>
-    <script>
-        let seahawksScore = 0;
-        let patriotsScore = 0;
+</div>
 
-        function updateScore(team) {
-            if (team === 'seahawks') seahawksScore++;
-            if (team === 'patriots') patriotsScore++;
-            renderScores();
-        }
+<div class="grid-container">
+    <div class="log-qtr-btns">
+        Log Quarter End: 
+        <button class="btn-qtr" onclick="logScore(1)">Q1</button>
+        <button class="btn-qtr" onclick="logScore(2)">Q2</button>
+        <button class="btn-qtr" onclick="logScore(3)">Q3</button>
+        <button class="btn-qtr" onclick="logScore(4)">Q4</button>
+    </div>
 
-        function renderScores() {
-            const squares = document.querySelectorAll('.square');
-            squares.forEach((square, index) => {
-                square.textContent = (index < seahawksScore) ? 'S' : (index < seahawksScore + patriotsScore) ? 'P' : '0';
-            });
+    <p style="font-size: 0.85rem; color: #8899ac;">Click any square to add your name. The highlighted square shows the current winning position.</p>
+
+    <div style="color: var(--accent-green); font-weight: bold; margin-bottom: 10px;">🦅 NFC - SEAHAWKS</div>
+    
+    <div class="grid-wrapper">
+        <div class="patriots-side-label">AFC - PATRIOTS 🇺🇸</div>
+        <table id="mainGrid"></table>
+    </div>
+</div>
+
+<script>
+    let entries = JSON.parse(localStorage.getItem('sb_entries_v2')) || {};
+    let scores = JSON.parse(localStorage.getItem('sb_scores_v2')) || {h: 0, a: 0, q1: '--', q2: '--', q3: '--', q4: '--'};
+
+    function init() {
+        // Load Scores
+        document.getElementById('score-home').innerText = scores.h;
+        document.getElementById('score-away').innerText = scores.a;
+        document.getElementById('q1-score').innerText = scores.q1;
+        document.getElementById('q2-score').innerText = scores.q2;
+        document.getElementById('q3-score').innerText = scores.q3;
+        document.getElementById('q4-score').innerText = scores.q4;
+
+        renderGrid();
+    }
+
+    function renderGrid() {
+        const table = document.getElementById('mainGrid');
+        let html = '<tr><td></td>';
+        for(let i=0; i<10; i++) html += `<td class="num-header">${i}</td>`;
+        html += '</tr>';
+
+        for(let r=0; r<10; r++) {
+            html += `<tr><td class="side-header">${r}</td>`;
+            for(let c=0; c<10; c++) {
+                const key = `${r}-${c}`;
+                const name = entries[key] || '<span class="add-icon">+</span>';
+                const isWinner = (scores.h % 10 === c && scores.a % 10 === r);
+                html += `<td class="${isWinner ? 'active-winner' : ''}" onclick="updateName('${r}','${c}')">${name}</td>`;
+            }
+            html += '</tr>';
         }
-    </script>
+        table.innerHTML = html;
+    }
+
+    function updateName(r, c) {
+        const name = prompt("Enter Name:");
+        if (name === null) return;
+        entries[`${r}-${c}`] = name;
+        localStorage.setItem('sb_entries_v2', JSON.stringify(entries));
+        renderGrid();
+    }
+
+    function logScore(q) {
+        const h = prompt("Current Seahawks Score:");
+        const a = prompt("Current Patriots Score:");
+        if (h !== null && a !== null) {
+            scores.h = h;
+            scores.a = a;
+            scores[`q${q}`] = `${h}-${a}`;
+            localStorage.setItem('sb_scores_v2', JSON.stringify(scores));
+            init();
+        }
+    }
+
+    window.onload = init;
+</script>
 </body>
 </html>
