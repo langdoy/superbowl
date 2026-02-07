@@ -6,249 +6,124 @@
     <title>Super Bowl LX Tracker</title>
     <style>
         :root {
-            --bg-dark: #05162e;
-            --card-bg: #0d213f;
-            --accent-green: #69BE28;
-            --accent-red: #C60C30;
-            --text-main: #e0e6ed;
-            --border: #1a3a5f;
+            --bg: #05162e; --card: #0d213f; --green: #69BE28;
+            --red: #C60C30; --text: #e0e6ed; --border: #1a3a5f;
         }
+        body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; flex-direction: column; align-items: center; }
+        
+        /* Banner - 300px Height */
+        .banner { width: 100%; height: 300px; background: url('banner.png') no-repeat center center; background-size: cover; border-bottom: 4px solid var(--green); }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        .refresh-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: white; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 10px; }
+        
+        /* Scoreboard */
+        .card { background: var(--card); width: 90%; max-width: 600px; border-radius: 12px; padding: 20px; text-align: center; border: 1px solid var(--border); margin: 20px 0; }
+        .score-row { display: flex; justify-content: space-around; align-items: center; font-size: 3rem; font-weight: bold; }
+        .team-label { font-size: 0.8rem; color: #8899ac; margin-bottom: 5px; }
+        
+        .qtr-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 20px; }
+        .qtr-box { background: rgba(0,0,0,0.2); padding: 10px; border-radius: 6px; border: 1px solid var(--border); font-size: 0.8rem; }
+
+        /* Grid - Table Layout to prevent vertical stacking */
+        .grid-wrapper { display: flex; align-items: center; margin-top: 20px; }
+        .patriots-side { writing-mode: vertical-rl; transform: rotate(180deg); color: var(--red); font-weight: bold; padding: 15px; text-transform: uppercase; font-size: 1.1rem; }
+        
+        table { border-collapse: collapse; background: rgba(255,255,255,0.02); table-layout: fixed; }
+        td { 
+            width: 52px; height: 52px; border: 1px solid var(--border); 
+            text-align: center; font-size: 0.65rem; color: white;
+            display: table-cell; vertical-align: middle; /* Forces grid structure */
         }
-
-        /* Banner - Updated to 300px */
-        .banner {
-            width: 100%;
-            height: 300px;
-            background: url('banner.jpg') no-repeat center center;
-            background-size: cover;
-        }
-
-        .status-bar {
-            width: 90%;
-            max-width: 1000px;
-            display: flex;
-            justify-content: flex-end;
-            padding: 15px 0;
-        }
-
-        .refresh-btn {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border);
-            color: white;
-            padding: 8px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        /* Scoreboard Card */
-        .card {
-            background: var(--card-bg);
-            width: 90%;
-            max-width: 800px;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            text-align: center;
-            border: 1px solid var(--border);
-        }
-
-        .scores-display {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .team-score { font-size: 4rem; font-weight: 800; margin: 10px 0; }
-        .seahawks-color { color: var(--accent-green); }
-        .patriots-color { color: var(--accent-red); }
-
-        .qtr-row {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-        }
-
-        .qtr-box {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--border);
-            padding: 15px;
-            border-radius: 10px;
-        }
-
-        /* Grid Section */
-        .grid-container {
-            margin-top: 40px;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .grid-wrapper { display: flex; align-items: center; }
-
-        .patriots-side-label {
-            writing-mode: vertical-rl;
-            transform: rotate(180deg);
-            padding-right: 20px;
-            color: var(--accent-red);
-            font-weight: bold;
-            font-size: 1.1rem;
-            text-transform: uppercase;
-        }
-
-        table { border-spacing: 4px; }
-
-        /* Squares 20% Smaller & Centered Content */
-        td {
-            width: 52px;
-            height: 52px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.65rem;
-            text-align: center;
-            /* Flex centering for the + symbol */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.3s;
-        }
-
-        td:hover { background: rgba(255,255,255,0.1); border-color: var(--accent-green); }
-
-        .active-winner {
-            background: #2a4d1a !important;
-            border: 2px solid var(--accent-green) !important;
-            box-shadow: 0 0 15px var(--accent-green);
-        }
-
-        .num-header { color: var(--accent-green); font-weight: bold; width: 52px; display: table-cell; }
-        .side-header { color: var(--accent-red); font-weight: bold; }
-
-        .log-controls { margin-top: 20px; }
-        .btn-log { background: transparent; border: 1px solid var(--border); color: #8899ac; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
+        .num-header { color: var(--green); font-weight: bold; }
+        .side-header { color: var(--red); font-weight: bold; }
+        .active-winner { background: #2a4d1a !important; border: 2px solid var(--green) !important; box-shadow: 0 0 10px var(--green); }
+        .plus { font-size: 1.2rem; opacity: 0.4; pointer-events: none; }
     </style>
 </head>
 <body>
 
 <div class="banner"></div>
 
-<div class="status-bar">
-    <button class="refresh-btn" onclick="fetchLiveScores()">🔄 Update Scores</button>
-</div>
+<button class="refresh-btn" onclick="fetchScores()">🔄 Update Scores</button>
 
 <div class="card">
-    <div class="scoreboard-title">🏆 SCOREBOARD 🏆</div>
-    <div class="scores-display">
-        <div>
-            <div style="font-size: 0.8rem; color: var(--accent-green);">SEAHAWKS</div>
-            <div class="team-score seahawks-color" id="score-home">0</div>
-        </div>
-        <div style="font-size: 2rem; opacity: 0.5;">-</div>
-        <div>
-            <div style="font-size: 0.8rem; color: var(--accent-red);">PATRIOTS</div>
-            <div class="team-score patriots-color" id="score-away">0</div>
-        </div>
+    <div class="score-row">
+        <div><div class="team-label" style="color:var(--green)">SEAHAWKS</div><span id="h">0</span></div>
+        <div style="font-size: 1.2rem; opacity: 0.3;">VS</div>
+        <div><div class="team-label" style="color:var(--red)">PATRIOTS</div><span id="a">0</span></div>
     </div>
-
-    <div class="qtr-row">
-        <div class="qtr-box"><div>Q1</div><div id="q1-score">--</div></div>
-        <div class="qtr-box"><div>Q2</div><div id="q2-score">--</div></div>
-        <div class="qtr-box"><div>Q3</div><div id="q3-score">--</div></div>
-        <div class="qtr-box"><div>Q4</div><div id="q4-score">--</div></div>
+    <div class="qtr-grid">
+        <div class="qtr-box">Q1<br><span id="q1">--</span></div>
+        <div class="qtr-box">Q2<br><span id="q2">--</span></div>
+        <div class="qtr-box">Q3<br><span id="q3">--</span></div>
+        <div class="qtr-box">Q4<br><span id="q4">--</span></div>
     </div>
-
-    <div class="log-controls">
-        <span style="font-size: 0.8rem; color: #8899ac;">Log Quarter End:</span>
-        <button class="btn-log" onclick="logQuarter(1)">Q1</button>
-        <button class="btn-log" onclick="logQuarter(2)">Q2</button>
-        <button class="btn-log" onclick="logQuarter(3)">Q3</button>
-        <button class="btn-log" onclick="logQuarter(4)">Q4</button>
+    <div style="margin-top: 15px; font-size: 0.75rem;">
+        Log: 
+        <button onclick="log(1)">Q1</button><button onclick="log(2)">Q2</button>
+        <button onclick="log(3)">Q3</button><button onclick="log(4)">Q4</button>
     </div>
 </div>
 
-<div class="grid-container">
-    <div style="color: var(--accent-green); font-weight: bold; margin-bottom: 10px;">NFC - SEAHAWKS</div>
-    <div class="grid-wrapper">
-        <div class="patriots-side-label">AFC - PATRIOTS</div>
-        <table id="mainGrid"></table>
-    </div>
+<div style="color:var(--green); font-weight:bold; margin-bottom:10px;">NFC - SEAHAWKS</div>
+<div class="grid-wrapper">
+    <div class="patriots-side">AFC - PATRIOTS</div>
+    <table id="grid"></table>
 </div>
 
 <script>
-    let entries = JSON.parse(localStorage.getItem('sb_entries_v3')) || {};
-    let scores = JSON.parse(localStorage.getItem('sb_scores_v3')) || {h: 0, a: 0, q1:'--', q2:'--', q3:'--', q4:'--'};
+    let entries = JSON.parse(localStorage.getItem('sb_v5_e')) || {};
+    let scores = JSON.parse(localStorage.getItem('sb_v5_s')) || {h:0, a:0, q1:'--', q2:'--', q3:'--', q4:'--'};
 
-    async function fetchLiveScores() {
+    async function fetchScores() {
         try {
-            const res = await fetch('https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard');
-            const data = await res.json();
-            const game = data.events.find(e => e.shortName.includes('SEA') && e.shortName.includes('NE'));
-            if (game) {
-                scores.h = parseInt(game.competitions[0].competitors.find(t => t.team.abbreviation === 'SEA').score);
-                scores.a = parseInt(game.competitions[0].competitors.find(t => t.team.abbreviation === 'NE').score);
-                localStorage.setItem('sb_scores_v3', JSON.stringify(scores));
-                updateUI();
+            const r = await fetch('https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard');
+            const d = await r.json();
+            const g = d.events.find(e => e.shortName.includes('SEA') && e.shortName.includes('NE'));
+            if (g) {
+                scores.h = parseInt(g.competitions[0].competitors.find(t=>t.team.abbreviation==='SEA').score);
+                scores.a = parseInt(g.competitions[0].competitors.find(t=>t.team.abbreviation==='NE').score);
+                save();
             }
-        } catch (e) { console.warn("Score sync unavailable."); }
+        } catch(e) {}
     }
 
-    function updateUI() {
-        document.getElementById('score-home').innerText = scores.h;
-        document.getElementById('score-away').innerText = scores.a;
-        document.getElementById('q1-score').innerText = scores.q1;
-        document.getElementById('q2-score').innerText = scores.q2;
-        document.getElementById('q3-score').innerText = scores.q3;
-        document.getElementById('q4-score').innerText = scores.q4;
-        renderGrid();
+    function save() {
+        localStorage.setItem('sb_v5_s', JSON.stringify(scores));
+        update();
     }
 
-    function renderGrid() {
-        const table = document.getElementById('mainGrid');
-        let html = '<tr><td></td>';
-        for(let i=0; i<10; i++) html += `<td class="num-header">${i}</td>`;
-        html += '</tr>';
+    function update() {
+        document.getElementById('h').innerText = scores.h;
+        document.getElementById('a').innerText = scores.a;
+        ['q1','q2','q3','q4'].forEach(q => document.getElementById(q).innerText = scores[q]);
+        render();
+    }
 
+    function render() {
+        let h = '<tr><td></td>';
+        for(let i=0; i<10; i++) h += `<td class="num-header">${i}</td>`;
+        h += '</tr>';
         for(let r=0; r<10; r++) {
-            html += `<tr><td class="side-header">${r}</td>`;
+            h += `<tr><td class="side-header">${r}</td>`;
             for(let c=0; c<10; c++) {
-                const key = `${r}-${c}`;
-                const name = entries[key] || '+';
-                const isWinner = (scores.h % 10 === c && scores.a % 10 === r);
-                html += `<td class="${isWinner ? 'active-winner' : ''}" onclick="addName('${r}','${c}')">${name}</td>`;
+                let name = entries[`${r}-${c}`] || '<span class="plus">+</span>';
+                let win = (scores.h % 10 === c && scores.a % 10 === r);
+                h += `<td class="${win ? 'active-winner':''}" onclick="add('${r}','${c}')">${name}</td>`;
             }
-            html += '</tr>';
+            h += '</tr>';
         }
-        table.innerHTML = html;
+        document.getElementById('grid').innerHTML = h;
     }
 
-    function addName(r, c) {
-        const name = prompt("Enter name for this square:");
-        if (name !== null) {
-            entries[`${r}-${c}`] = name;
-            localStorage.setItem('sb_entries_v3', JSON.stringify(entries));
-            renderGrid();
-        }
+    function add(r, c) {
+        let n = prompt("Enter Name:");
+        if(n !== null) { entries[`${r}-${c}`] = n; localStorage.setItem('sb_v5_e', JSON.stringify(entries)); render(); }
     }
 
-    function logQuarter(q) {
-        scores[`q${q}`] = `${scores.h}-${scores.a}`;
-        localStorage.setItem('sb_scores_v3', JSON.stringify(scores));
-        updateUI();
-    }
+    function log(q) { scores[`q${q}`] = `${scores.h}-${scores.a}`; save(); }
 
-    window.onload = () => { updateUI(); fetchLiveScores(); };
+    window.onload = update;
 </script>
 </body>
 </html>
